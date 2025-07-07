@@ -1,1 +1,1 @@
-from app.models.models import Base  # noqa
+from src.models.base import Base  # noqa
