@@ -1,0 +1,9 @@
+fastapi[all]
+sqlalchemy[asyncio]
+asyncpg
+alembic
+python-jose[cryptography]
+passlib[bcrypt]
+pydantic
+returns
+
