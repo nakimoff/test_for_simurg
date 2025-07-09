@@ -5,9 +5,9 @@ from sqlalchemy.future import select
 from src.schemas.user import UserCreate, UserRead
 from src.models.user import User
 from src.db.session import get_session
-from services.security import get_password_hash
+from src.services.security import get_password_hash
 
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter()
 
 
 @router.post("/", response_model=UserRead, status_code=status.HTTP_201_CREATED)

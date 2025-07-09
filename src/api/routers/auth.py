@@ -9,7 +9,7 @@ from src.services.auth import authenticate_user, get_current_user
 from src.models.user import User
 from src.db.session import get_session
 
-auth_router = APIRouter(prefix="/auth", tags=["Auth"])
+auth_router = APIRouter()
 
 
 @auth_router.post("/register", response_model=UserRead)

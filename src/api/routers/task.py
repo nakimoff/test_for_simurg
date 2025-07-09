@@ -8,7 +8,7 @@ from src.db.session import get_session
 from src.models.task import Task
 from src.schemas.task import TaskCreate, TaskRead, TaskUpdate
 
-router = APIRouter(prefix="/tasks", tags=["Tasks"])
+router = APIRouter()
 
 
 @router.post("/", response_model=TaskRead, status_code=status.HTTP_201_CREATED)
