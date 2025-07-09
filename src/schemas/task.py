@@ -6,10 +6,11 @@ class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
     is_done: bool = False
+    owner_id: int
 
 
 class TaskCreate(TaskBase):
-    owner_id: int
+    pass
 
 
 class TaskUpdate(BaseModel):

@@ -1,9 +1,10 @@
 from fastapi import FastAPI
-from src.api.routers import task
+from src.api.routers import task, user
 
 app = FastAPI(title="Simurg Task API")
 
-app.include_router(task.router, prefix="/tasks", tags=["Tasks"])
+app.include_router(task.router)
+app.include_router(user.router)
 
 
 @app.get("/ping")
