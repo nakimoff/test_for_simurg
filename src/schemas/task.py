@@ -5,10 +5,11 @@ from typing import Optional
 class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
+    is_done: bool = False
 
 
 class TaskCreate(TaskBase):
-    pass
+    owner_id: int
 
 
 class TaskUpdate(BaseModel):
@@ -19,7 +20,7 @@ class TaskUpdate(BaseModel):
 
 class TaskRead(TaskBase):
     id: int
-    is_done: bool
+    owner_id: int
 
     class Config:
         from_attributes = True

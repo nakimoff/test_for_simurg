@@ -1,18 +1,17 @@
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from src.core.config import settings
-
-engine = create_async_engine(
-    settings.DATABASE_URL,
-    echo=True,
-)
-
-AsyncSessionLocal = async_sessionmaker(
-    bind=engine,
-    expire_on_commit=False,
-    class_=AsyncSession,
-)
+from pydantic_settings import BaseSettings
+from pydantic import PostgresDsn
 
 
-async def get_session() -> AsyncSession:
-    async with AsyncSessionLocal() as session:
-        yield session
+class Settings(BaseSettings):
+    DATABASE_URL: PostgresDsn
+    SYNC_DATABASE_URL: str
+    JWT_SECRET_KEY: str
+    JWT_ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    PYTHONPATH: str
+
+    class Config:
+        env_file = ".env"
+
+
+settings = Settings()
