@@ -19,8 +19,11 @@ class TaskUpdate(BaseModel):
     is_done: Optional[bool] = None
 
 
-class TaskRead(TaskBase):
+class TaskRead(BaseModel):
     id: int
+    title: str
+    description: str | None
+    is_done: bool
     owner_id: int
 
     class Config:

@@ -1,19 +1,23 @@
 from datetime import datetime, timedelta
+from typing import Any, Dict, Optional
+
 from jose import jwt, JWTError
 from src.schemas.token import TokenData
 from src.core.config import settings
 
 
 class TokenService:
-    SECRET_KEY = settings.JWT_SECRET_KEY
-    ALGORITHM = settings.JWT_ALGORITHM
-    ACCESS_TOKEN_EXPIRE_MINUTES = int(settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    SECRET_KEY: str = settings.JWT_SECRET_KEY
+    ALGORITHM: str = settings.JWT_ALGORITHM
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
     @classmethod
     def create_access_token(
-        cls, data: dict, expires_delta: timedelta | None = None
+        cls,
+        data: Dict[str, Any],
+        expires_delta: Optional[timedelta] = None,
     ) -> str:
-        to_encode = data.copy()
+        to_encode: Dict[str, Any] = data.copy()
         expire = datetime.utcnow() + (
             expires_delta or timedelta(minutes=cls.ACCESS_TOKEN_EXPIRE_MINUTES)
         )
@@ -23,8 +27,13 @@ class TokenService:
     @classmethod
     def decode_access_token(cls, token: str) -> TokenData:
         try:
-            payload = jwt.decode(token, cls.SECRET_KEY, algorithms=[cls.ALGORITHM])
-            user_id = int(payload.get("sub"))
+            payload: Dict[str, Any] = jwt.decode(
+                token, cls.SECRET_KEY, algorithms=[cls.ALGORITHM]
+            )
+            user_id_str = payload.get("sub")
+            if user_id_str is None:
+                raise JWTError("Token missing subject (sub)")
+            user_id = int(user_id_str)
             return TokenData(user_id=user_id)
         except (JWTError, ValueError, TypeError):
             raise JWTError("Invalid token")

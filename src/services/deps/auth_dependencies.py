@@ -1,26 +1,14 @@
-from sqlalchemy import select
 from fastapi import Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.ext.asyncio import AsyncSession
 from jose import JWTError
 
 from src.db.session import get_session
-from src.models.user import User
-from src.services.security import verify_password
 from src.services.jwt_token import TokenService
-from src.schemas.token import TokenData
+from src.models.user import User
+from sqlalchemy import select
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
-
-
-async def authenticate_user(
-    email: str, password: str, session: AsyncSession
-) -> User | None:
-    result = await session.execute(select(User).where(User.email == email))
-    user = result.scalars().first()
-    if not user or not verify_password(password, user.hashed_password):
-        return None
-    return user
 
 
 async def get_current_user(
