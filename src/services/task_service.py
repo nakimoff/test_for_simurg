@@ -1,22 +1,47 @@
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, asc, desc
 from fastapi import HTTPException, status
 from sqlalchemy import select
 
 from src.models.task import Task
 from src.schemas.task import TaskCreate, TaskUpdate
+from src.models.user import User
+
+VALID_SORT_FIELDS = {"id", "title", "is_done"}
 
 
-async def create_task(task_in: TaskCreate, session: AsyncSession) -> Task:
-    task = Task(**task_in.model_dump())
+async def create_task(
+    task_in: TaskCreate, session: AsyncSession, owner_id: int
+) -> Task:
+    task = Task(**task_in.model_dump(), owner_id=owner_id)
     session.add(task)
     await session.commit()
     await session.refresh(task)
     return task
 
 
-async def get_tasks(session: AsyncSession) -> List[Task]:
-    result = await session.execute(select(Task))
+async def get_tasks(
+    session: AsyncSession,
+    user: User,
+    is_done: bool | None = None,
+    sort: str | None = None,
+) -> List[Task]:
+    query = select(Task).where(Task.owner_id == user.id)
+
+    if is_done is not None:
+        query = query.where(Task.is_done == is_done)
+
+    if sort:
+        desc_order = sort.startswith("-")
+        sort_field = sort.lstrip("-")
+        if hasattr(Task, sort_field):
+            sort_column = getattr(Task, sort_field)
+            query = query.order_by(
+                desc(sort_column) if desc_order else asc(sort_column)
+            )
+
+    result = await session.execute(query)
     return list(result.scalars().all())
 
 

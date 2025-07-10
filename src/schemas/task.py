@@ -1,12 +1,19 @@
 from pydantic import BaseModel
 from typing import Optional
+from enum import Enum
+
+
+class TaskPriority(str, Enum):
+    low = "low"
+    medium = "medium"
+    high = "high"
 
 
 class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
     is_done: bool = False
-    owner_id: int
+    priority: TaskPriority
 
 
 class TaskCreate(TaskBase):
@@ -17,13 +24,11 @@ class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     is_done: Optional[bool] = None
+    priority: Optional[TaskPriority] = None
 
 
-class TaskRead(BaseModel):
+class TaskRead(TaskBase):
     id: int
-    title: str
-    description: str | None
-    is_done: bool
     owner_id: int
 
     class Config:
